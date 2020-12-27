@@ -207,15 +207,42 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 	return 0;
 }
 
+// midi packets
+// byte 0: packet header - cable number, code index (msg type)
+// packet header: cable number 0, code index 9=note-on
+// midi byte 1 - msg type, channel
+// midi byte 2 - note or CC number
+// midi byte 3 - velocity or value
+uchar midiPkt[16][4] = {
+    {0x0B, 0xB0, 0x40, 0x7f}, // [0] ch1 hold pedal down
+    {0x0B, 0xB0, 0x40, 0x00}, // [1] ch1 hold pedal up
+    {0x09, 0x99, 0x24, 0x7f}, // [2] ch10 kickdrum note on
+    {0x08, 0x89, 0x24, 0x00}, // [3] ch10 kickdrum note off
+    {0x0B, 0xBE, 0x10, 0x7f}, // [4] ch15 CC 16 momentary on
+    {0x0B, 0xBE, 0x10, 0x00}, // [5] ch15 CC 16 momentary off
+    {0x0B, 0xBE, 0x11, 0x7f}, // [6] ch15 CC 17 toggle on
+    {0x0B, 0xBE, 0x11, 0x00}, // [7] ch15 CC 17 toggle off
+    {0x09, 0x9E, 0x24, 0x7f}, // [8] ch15 kickdrum note on
+    {0x08, 0x8E, 0x24, 0x00}, // [9] ch15 kickdrum note off    
+    {0x09, 0x9E, 0x2E, 0x7f}, // [10] ch15 openhat note on
+    {0x08, 0x8E, 0x2E, 0x00}, // [11] ch15 openhat note off    
+    {0x09, 0x9E, 0x26, 0x7f}, // [12] ch15 snare note on
+    {0x08, 0x8E, 0x26, 0x00}, // [13] ch15 snare note off    
+    {0x09, 0x9E, 0x33, 0x7f}, // [14] ch15 ride note on
+    {0x08, 0x8E, 0x33, 0x00}  // [15] ch15 ride note off    
+};
+uint8_t msg1[] = {0, 2, 4, 6, 8, 15};
+uint8_t msg2[] = {1, 3, 5, 10, 9};
+uint8_t msg3[] = {0, 2, 4, 7, 12, 11};
+uint8_t msg4[] = {1, 3, 5, 14, 13};
+uint8_t msgLen[] = {6, 5, 6, 5};
+uint8_t *msgList[] = {msg1, msg2, msg3, msg4};
+#define MSG_COUNT 4
 
-uchar midiMsg[4] = {0x09, 0x90, 0x40, 0x7f};
-// packet header: cable number 0, code index 9=note on
-// midi byte 1 - type=note, padded with zero
-// midi byte 2 - note number 40=E2
-// midi byte 3 - velocity = 127
-
-uint8_t lastReading  = 1;
+uint8_t lastReading = 1;
 uint8_t buttonState = 1;
+uint8_t msgNum = MSG_COUNT;
+uint8_t msgPos = 0;
 
 static inline void initTimer1(void)
 {
@@ -230,12 +257,10 @@ ISR(TIMER1_COMPA_vect)
 {
     buttonState = PINB & (1 << PB0);
 	if (buttonState != lastReading)
-	{  
-        if (buttonState == 0) // active low
-        {
-            if (usbInterruptIsReady())
-                usbSetInterrupt(midiMsg, 4);
-        }
+	{
+        msgNum++;
+        if (msgNum >= MSG_COUNT) msgNum = 0;
+        msgPos = msgLen [msgNum];
 	}
 	lastReading = buttonState;
 }
@@ -260,6 +285,15 @@ int	main(void)
 	
 	for(;;){                // main event loop
 		usbPoll();
+        if (msgPos > 0)
+        {
+            if (usbInterruptIsReady())
+            {
+                msgPos--;
+                i = msgList[msgNum][msgPos];
+                usbSetInterrupt(midiPkt[i], 4);
+            }
+        }
 	}
 	return 0;
 }
