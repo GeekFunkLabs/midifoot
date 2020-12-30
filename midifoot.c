@@ -7,6 +7,8 @@
 #include <avr/interrupt.h>  /* for sei() */
 #include <avr/pgmspace.h>   /* required by usbdrv.h */
 #include <util/delay.h>     /* for _delay_ms() */
+#include <avr/wdt.h>
+
 #include "usbdrv.h"
 #if USE_INCLUDE
 #include "usbdrv.c"
@@ -197,7 +199,7 @@ usbMsgLen_t usbFunctionDescriptor(usbRequest_t * rq)
     }
 }
 
-// standard setup
+// no special setup needed
 usbMsgLen_t usbFunctionSetup(uchar data[8])
 {
     return 0;
@@ -274,6 +276,7 @@ int main(void)
 {
     uint8_t i;
 
+    wdt_enable(WDTO_1S);
     usbInit();
     usbDeviceDisconnect();  // enforce re-enumeration
     i = 0;
@@ -291,6 +294,7 @@ int main(void)
     
     for(;;)
     {                // main event loop
+        wdt_reset();
         usbPoll();
     }
     return 0;
