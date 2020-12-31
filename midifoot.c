@@ -274,17 +274,17 @@ ISR(TIMER1_COMPA_vect)
 
 int main(void)
 {
-    uint8_t i;
-
-    wdt_enable(WDTO_1S);
+    MCUSR = 0;
+    wdt_disable();
     usbInit();
-    usbDeviceDisconnect();  // enforce re-enumeration
-    i = 0;
-    while(--i)
-    {             // fake USB disconnect for > 250 ms
+    usbDeviceDisconnect(); // enforce re-enumeration
+    uint8_t i = 0;
+    while(--i) // fake USB disconnect for > 250 ms
+    {
         _delay_ms(1);
     }
     usbDeviceConnect();
+    wdt_enable(WDTO_500MS);
     sei();
 
     DDRB &= ~(1 << PB0);        // set PB0 as input (default)
@@ -292,9 +292,9 @@ int main(void)
 
     initTimer1();               // initialize timer and interrupt
     
-    for(;;)
-    {                // main event loop
-        wdt_reset();
+    for(;;) // main event loop
+    {
+        wdt_reset(); // reset the watchdog timer
         usbPoll();
     }
     return 0;
