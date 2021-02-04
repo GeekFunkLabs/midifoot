@@ -229,18 +229,18 @@ uchar midiPkt[16][4] = {
     {0x09, 0x9E, 0x33, 0x7f}, // [14] ch15 ride note on
     {0x08, 0x8E, 0x33, 0x00}  // [15] ch15 ride note off    
 };
-uint8_t msg1[] = {0, 2, 4, 6, 8, 15};
-uint8_t msg2[] = {1, 3, 5, 10, 9};
-uint8_t msg3[] = {0, 2, 4, 7, 12, 11};
-uint8_t msg4[] = {1, 3, 5, 14, 13};
-uint8_t msgLen[] = {6, 5, 6, 5};
-uint8_t *msgList[] = {msg1, msg2, msg3, msg4};
-#define MSG_COUNT 4
+uint8_t batch1[] = {0, 2, 4, 6, 8, 15};
+uint8_t batch2[] = {1, 3, 5, 10, 9};
+uint8_t batch3[] = {0, 2, 4, 7, 12, 11};
+uint8_t batch4[] = {1, 3, 5, 14, 13};
+uint8_t batchLen[] = {6, 5, 6, 5};
+uint8_t *batchList[] = {batch1, batch2, batch3, batch4};
+#define BATCH_COUNT 4
 
 uint8_t lastReading = 1;
 uint8_t buttonState = 1;
-uint8_t msgNum = MSG_COUNT;
-uint8_t msgPos = 0;
+uint8_t batchNum = BATCH_COUNT;
+uint8_t batchPos = 0;
 
 static inline void initTimer1(void)
 {
@@ -253,21 +253,21 @@ static inline void initTimer1(void)
 
 ISR(TIMER1_COMPA_vect)
 {
-    if (msgPos > 0)
+    if (batchPos > 0)
     {
         if (usbInterruptIsReady())
         {
-            msgPos--;
-            usbSetInterrupt(midiPkt[msgList[msgNum][msgPos]], 4);
+            batchPos--;
+            usbSetInterrupt(midiPkt[batchList[batchNum][batchPos]], 4);
         }
         return; // send all messages before registering another buttonpress
     }
     buttonState = PINB & (1 << PB0);
     if (buttonState != lastReading)
     {
-        msgNum++;
-        if (msgNum >= MSG_COUNT) msgNum = 0;
-        msgPos = msgLen [msgNum];
+        batchNum++;
+        if (batchNum >= BATCH_COUNT) batchNum = 0;
+        batchPos = batchLen [batchNum];
     }
     lastReading = buttonState;
 }
