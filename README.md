@@ -20,6 +20,7 @@ You will need an AVR-C environment installed to build from source. A Raspberry P
 sudo apt install gcc-avr
 ```
 Make the following connections to program the ATTiny85:
+
 RPi Physical Pin | ATTiny85
 -------------|-----------
 23 (SCLK) | 7 (SCK)
@@ -29,7 +30,7 @@ RPi Physical Pin | ATTiny85
 2 (5V) | 8 (VCC)
 6 (GND) | 4 (GND)
 
-You must also connect a 16MHz clock source (quartz oscillator) to pins 2/3 (XTAL1/2) on the ATTiny, and ground each pin through a 22pF capacitor. To compile the software, flash the chip, and set the fuses, enter
+You must also connect a 16MHz clock source (quartz oscillator) to pins 2&3 (XTAL1&2) on the ATTiny, and ground each pin through a 22pF capacitor. To compile the software, flash the chip, and set the fuses, enter
 ```
 sudo make flash && sudo make fuse
 ```
