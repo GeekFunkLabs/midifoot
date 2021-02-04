@@ -33,3 +33,5 @@ You must also connect a 16MHz clock source (quartz oscillator) to pins 2/3 (XTAL
 ```
 sudo make flash && sudo make fuse
 ```
+## Modifying
+You can send whatever messages you wish by modifying the code in _midifoot.c_ and recompiling and flashing as described above. Modify the `midiPkt` array to define what individual messages can be sent - the [comment](https://github.com/albedozero/midifoot/blob/d33accc54c5183eeefc905d57f539b52d1b95b1d/midifoot.c#L208) above the declaration explains the formatting of MIDI messages. Create `batch[X]` arrays of type `uint8_t` with lists of indices of messages in `midiPkt` that will be sent for each button press or release. Put the number of elements of each batch in `batchLen`, add each batch to `batchList`, and update `BATCH_COUNT` to reflect the total number of batches.
