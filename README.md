@@ -1,5 +1,5 @@
 # MidiFoot
-The MidiFoot is a USB MIDI controller with a single button. It sends different batches of messages when you press and release the button (shown below), which you can map to whatever you need to control in your sound module/DAW. It uses an ATTiny85 to emulate a class-compliant USB MIDI device using the [V-USB](https://www.obdev.at/products/vusb/index.html) library, so it’s inexpensive and doesn’t need any drivers installed to work on most computers. The PID=1508 and VID=5824 have been generously sponsored by [Objective Development](https://www.obdev.at/). The MidiFoot is a creation of [Geek Funk Labs](http://geekfunklabs.com), where you can find a complete bill of materials, links to obtain kits/builds, etc.
+The MidiFoot is a USB MIDI controller with a single button. It sends different batches of messages when you press and release the button (shown below), which you can map to whatever you need to control in your sound module/DAW. It uses an ATTiny85 to emulate a class-compliant USB MIDI device using the [V-USB](https://www.obdev.at/products/vusb/index.html) library, so it’s inexpensive and doesn’t need any drivers installed to work on most computers. The PID=1508 and VID=5824 have been generously provided by [Objective Development](https://www.obdev.at/). The MidiFoot is a creation of [Geek Funk Labs](http://geekfunklabs.com), where you can find a complete bill of materials, links to obtain kits/builds, etc.
 
 MidiFoot sends the following MIDI messages on the specified MIDI channels each time you press and release the button:
 
@@ -15,7 +15,7 @@ MidiFoot sends the following MIDI messages on the specified MIDI channels each t
   
 ## Installing/Flashing
 
-You will need an AVR-C environment installed to build from source. A Raspberry Pi is quite useful as a build environment, as you can flash AVRs using the SPI interface on the GPIO header. To install AVR-GCC on the Pi, enter
+You will need an AVR-C environment installed to build from source. A Raspberry Pi is quite useful as a build environment, as you can flash AVRs using the SPI interface on the GPIO header. The included Makefile assumes you are doing this - modify the `AVRDUDE` variable if you are using a different programmer. To install AVR-GCC on the Pi, enter
 ```
 sudo apt install gcc-avr
 ```
