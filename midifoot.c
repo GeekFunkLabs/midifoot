@@ -206,11 +206,18 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 }
 
 // midi packets
-// byte 0: packet header - cable number, code index (msg type)
-// packet header: cable number 0, code index 9=note-on
+// byte 0: packet header - cable number (always 0), code index (msg type)
 // midi byte 1 - msg type, channel
 // midi byte 2 - note or CC number
 // midi byte 3 - velocity or value
+//  msg types:
+//   8 - note-on
+//   9 - note-off
+//   A - poly-keypress
+//   B - control change
+//   C - program change
+//   D - channel pressure
+//   E - pitch bend
 uchar midiPkt[16][4] = {
     {0x0B, 0xB0, 0x40, 0x7f}, // [0] ch1 hold pedal down
     {0x0B, 0xB0, 0x40, 0x00}, // [1] ch1 hold pedal up

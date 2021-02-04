@@ -3,18 +3,12 @@
 # Author: Bill Peterson
 # Creation Date: 2020-12-01
 # Tabsize: 4
-# Copyright:
-# License: GPLv2.
+# License: MIT
 
 DEVICE=attiny85
 AVRDUDE = avrdude -c linuxspi -P /dev/spidev0.0 -p $(DEVICE) -b 9600
-# The two lines above are for "avrdude" and the STK500 programmer connected
-# to an USB to serial converter to a Mac running Mac OS X.
+# The two lines above are for "avrdude" and the SPI pins on a Raspberry Pi
 # Choose your favorite programmer and interface.
-
-COMPILE = avr-gcc -Wall -Os -Iusbdrv -I. -mmcu=$(DEVICE) -DF_CPU=16000000 -DDEBUG_LEVEL=0
-# NEVER compile the final product with debugging! Any debug output will
-# distort timing so that the specs can't be met.
 
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o midifoot.o
 
