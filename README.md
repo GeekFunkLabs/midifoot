@@ -15,9 +15,9 @@ MidiFoot sends the following MIDI messages on the specified MIDI channels each t
   
 ## Installing/Flashing
 
-You will need an AVR-C environment installed to build from source. A Raspberry Pi is quite useful as a build environment, as you can flash AVRs using the SPI interface on the GPIO header. The included Makefile assumes you are doing this - modify the `AVRDUDE` variable if you are using a different programmer. To install AVR-GCC on the Pi, enter
+You will need an AVR-C environment installed to build from source. A Raspberry Pi is quite useful as a build environment, as you can compile code and flash AVRs using the SPI interface on the GPIO header. The included Makefile assumes you are doing this - modify the `AVRDUDE` variable if you are using a different programmer. To install the necessary tools for compiling and flashing on the Pi, enter
 ```
-sudo apt install gcc-avr avrdude
+sudo apt install gcc-avr avr-libc avrdude
 ```
 Make the following connections to program the ATTiny85:
 

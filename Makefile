@@ -10,6 +10,10 @@ AVRDUDE = avrdude -c linuxspi -P /dev/spidev0.0 -p $(DEVICE) -b 9600
 # The two lines above are for "avrdude" and the SPI pins on a Raspberry Pi
 # Choose your favorite programmer and interface.
 
+COMPILE = avr-gcc -Wall -Os -Iusbdrv -I. -mmcu=$(DEVICE) -DF_CPU=16000000 -DDEBUG_LEVEL=0
+# NEVER compile the final product with debugging! Any debug output will
+# distort timing so that the specs can't be met.
+
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o midifoot.o
 
 # symbolic targets:
@@ -47,9 +51,6 @@ midifoot.bin:	$(OBJECTS)
 midifoot.hex:	midifoot.bin
 	rm -f midifoot.hex midifoot.eep.hex
 	avr-objcopy -j .text -j .data -O ihex midifoot.bin midifoot.hex
-	./checksize midifoot.bin 4096 256
-# do the checksize script as our last action to allow successful compilation
-# on Windows with WinAVR where the Unix commands will fail.
 
 disasm:	midifoot.bin
 	avr-objdump -d midifoot.bin
