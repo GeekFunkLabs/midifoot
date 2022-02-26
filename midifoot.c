@@ -219,35 +219,27 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 //   D - channel pressure
 //   E - pitch bend
 uchar midiPkt[16][4] = {
-    {0x0B, 0xB0, 0x40, 0x7f}, // [0] ch1 hold pedal down
-    {0x0B, 0xB0, 0x40, 0x00}, // [1] ch1 hold pedal up
-    {0x09, 0x99, 0x24, 0x7f}, // [2] ch10 kickdrum note on
-    {0x08, 0x89, 0x24, 0x00}, // [3] ch10 kickdrum note off
-    {0x0B, 0xBE, 0x10, 0x7f}, // [4] ch15 CC 16 momentary on
-    {0x0B, 0xBE, 0x10, 0x00}, // [5] ch15 CC 16 momentary off
-    {0x0B, 0xBE, 0x11, 0x7f}, // [6] ch15 CC 17 toggle on
-    {0x0B, 0xBE, 0x11, 0x00}, // [7] ch15 CC 17 toggle off
-    {0x09, 0x9E, 0x24, 0x7f}, // [8] ch15 kickdrum note on
-    {0x08, 0x8E, 0x24, 0x00}, // [9] ch15 kickdrum note off    
-    {0x09, 0x9E, 0x2E, 0x7f}, // [10] ch15 openhat note on
-    {0x08, 0x8E, 0x2E, 0x00}, // [11] ch15 openhat note off    
-    {0x09, 0x9E, 0x26, 0x7f}, // [12] ch15 snare note on
-    {0x08, 0x8E, 0x26, 0x00}, // [13] ch15 snare note off    
-    {0x09, 0x9E, 0x33, 0x7f}, // [14] ch15 ride note on
-    {0x08, 0x8E, 0x33, 0x00}  // [15] ch15 ride note off    
+    {0x0B, 0xBE, 0x40, 0x46}, // [0]  ch15 cc64 (hold pedal) =  70 (on)
+    {0x0B, 0xBE, 0x40, 0x00}, // [1]  ch15 cc64 (hold pedal) =   0 (off)
+    {0x0B, 0xBE, 0x40, 0x5a}, // [2]  ch15 cc64 (hold pedal) =  90 (on)
+    {0x0B, 0xBE, 0x40, 0x14}, // [3]  ch15 cc64 (hold pedal) =  20 (off)
+    {0x0B, 0xBE, 0x40, 0x50}, // [4]  ch15 cc64 (hold pedal) =  80 (on)
+    {0x0B, 0xBE, 0x40, 0x0a}, // [5]  ch15 cc64 (hold pedal) =  10 (off)
+    {0x0B, 0xBE, 0x40, 0x64}, // [6]  ch15 cc64 (hold pedal) = 100 (on)
+    {0x0B, 0xBE, 0x40, 0x1e}, // [7]  ch15 cc64 (hold pedal) =  30 (off)
+    {0x0B, 0xBE, 0x40, 0x47}, // [8]  ch15 cc64 (hold pedal) =  71 (on)
+    {0x0B, 0xBE, 0x40, 0x01}, // [9]  ch15 cc64 (hold pedal) =   1 (off)
+    {0x0B, 0xBE, 0x40, 0x5b}, // [10] ch15 cc64 (hold pedal) =  91 (on)
+    {0x0B, 0xBE, 0x40, 0x15}, // [11] ch15 cc64 (hold pedal) =  21 (off)
+    {0x0B, 0xBE, 0x40, 0x51}, // [12] ch15 cc64 (hold pedal) =  81 (on)
+    {0x0B, 0xBE, 0x40, 0x0b}, // [13] ch15 cc64 (hold pedal) =  11 (off)
+    {0x0B, 0xBE, 0x40, 0x65}, // [14] ch15 cc64 (hold pedal) = 101 (on)
+    {0x0B, 0xBE, 0x40, 0x1f}, // [15] ch15 cc64 (hold pedal) =  31 (off)
 };
-uint8_t batch1[] = {0, 2, 4, 6, 8, 15};
-uint8_t batch2[] = {1, 3, 5, 10, 9};
-uint8_t batch3[] = {0, 2, 4, 7, 12, 11};
-uint8_t batch4[] = {1, 3, 5, 14, 13};
-uint8_t batchLen[] = {6, 5, 6, 5};
-uint8_t *batchList[] = {batch1, batch2, batch3, batch4};
-#define BATCH_COUNT 4
-
+#define MSG_COUNT 16
+uint8_t msgNum = 0;
 uint8_t lastReading = 1;
 uint8_t buttonState = 1;
-uint8_t batchNum = BATCH_COUNT;
-uint8_t batchPos = 0;
 
 static inline void initTimer1(void)
 {
@@ -260,21 +252,15 @@ static inline void initTimer1(void)
 
 ISR(TIMER1_COMPA_vect)
 {
-    if (batchPos > 0)
-    {
-        if (usbInterruptIsReady())
-        {
-            batchPos--;
-            usbSetInterrupt(midiPkt[batchList[batchNum][batchPos]], 4);
-        }
-        return; // send all messages before registering another buttonpress
-    }
     buttonState = PINB & (1 << PB0);
     if (buttonState != lastReading)
     {
-        batchNum++;
-        if (batchNum >= BATCH_COUNT) batchNum = 0;
-        batchPos = batchLen [batchNum];
+        if (usbInterruptIsReady())
+        {
+            usbSetInterrupt(midiPkt[msgNum], 4);
+            msgNum++;
+			if (msgNum >= MSG_COUNT) msgNum = 0;
+        }
     }
     lastReading = buttonState;
 }
