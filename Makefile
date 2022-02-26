@@ -36,7 +36,7 @@ flash:	all
 	$(AVRDUDE) -U flash:w:midifoot.hex:i
 
 fuse:
-	$(AVRDUDE) -U hfuse:w:0xdf:m -U lfuse:w:0xef:m
+	$(AVRDUDE) -U lfuse:w:0xef:m -U hfuse:w:0xdc:m
 
 readcal:
 	$(AVRDUDE) -U calibration:r:/dev/stdout:i | head -1
