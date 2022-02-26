@@ -221,49 +221,26 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 uchar midiPkt[16][4] = {
     {0x0B, 0xBE, 0x40, 0x46}, // [0]  ch15 cc64 (hold pedal) =  70 (on)
     {0x0B, 0xBE, 0x40, 0x00}, // [1]  ch15 cc64 (hold pedal) =   0 (off)
-    {0x0B, 0xBE, 0x40, 0x5a}, // [2]  ch15 cc64 (hold pedal) =  90 (on)
-    {0x0B, 0xBE, 0x40, 0x14}, // [3]  ch15 cc64 (hold pedal) =  20 (off)
+    {0x0B, 0xBE, 0x40, 0x64}, // [2]  ch15 cc64 (hold pedal) = 100 (on)
+    {0x0B, 0xBE, 0x40, 0x1e}, // [3]  ch15 cc64 (hold pedal) =  30 (off)
     {0x0B, 0xBE, 0x40, 0x50}, // [4]  ch15 cc64 (hold pedal) =  80 (on)
     {0x0B, 0xBE, 0x40, 0x0a}, // [5]  ch15 cc64 (hold pedal) =  10 (off)
-    {0x0B, 0xBE, 0x40, 0x64}, // [6]  ch15 cc64 (hold pedal) = 100 (on)
-    {0x0B, 0xBE, 0x40, 0x1e}, // [7]  ch15 cc64 (hold pedal) =  30 (off)
-    {0x0B, 0xBE, 0x40, 0x47}, // [8]  ch15 cc64 (hold pedal) =  71 (on)
-    {0x0B, 0xBE, 0x40, 0x01}, // [9]  ch15 cc64 (hold pedal) =   1 (off)
-    {0x0B, 0xBE, 0x40, 0x5b}, // [10] ch15 cc64 (hold pedal) =  91 (on)
-    {0x0B, 0xBE, 0x40, 0x15}, // [11] ch15 cc64 (hold pedal) =  21 (off)
-    {0x0B, 0xBE, 0x40, 0x51}, // [12] ch15 cc64 (hold pedal) =  81 (on)
-    {0x0B, 0xBE, 0x40, 0x0b}, // [13] ch15 cc64 (hold pedal) =  11 (off)
-    {0x0B, 0xBE, 0x40, 0x65}, // [14] ch15 cc64 (hold pedal) = 101 (on)
-    {0x0B, 0xBE, 0x40, 0x1f}, // [15] ch15 cc64 (hold pedal) =  31 (off)
+    {0x0B, 0xBE, 0x40, 0x6e}, // [6]  ch15 cc64 (hold pedal) = 110 (on)
+    {0x0B, 0xBE, 0x40, 0x28}, // [7]  ch15 cc64 (hold pedal) =  40 (off)
+    {0x0B, 0xBE, 0x40, 0x4b}, // [8]  ch15 cc64 (hold pedal) =  75 (on)
+    {0x0B, 0xBE, 0x40, 0x05}, // [9]  ch15 cc64 (hold pedal) =   5 (off)
+    {0x0B, 0xBE, 0x40, 0x69}, // [10] ch15 cc64 (hold pedal) = 105 (on)
+    {0x0B, 0xBE, 0x40, 0x23}, // [11] ch15 cc64 (hold pedal) =  35 (off)
+    {0x0B, 0xBE, 0x40, 0x55}, // [12] ch15 cc64 (hold pedal) =  85 (on)
+    {0x0B, 0xBE, 0x40, 0x0f}, // [13] ch15 cc64 (hold pedal) =  15 (off)
+    {0x0B, 0xBE, 0x40, 0x73}, // [14] ch15 cc64 (hold pedal) = 115 (on)
+    {0x0B, 0xBE, 0x40, 0x2d}, // [15] ch15 cc64 (hold pedal) =  45 (off)
 };
 #define MSG_COUNT 16
 uint8_t msgNum = 0;
 uint8_t lastReading = 1;
 uint8_t buttonState = 1;
-
-static inline void initTimer1(void)
-{
-    TCCR1 |= (1 << CTC1);       // clear timer on compare match
-    TCCR1 |= (1 << CS13);       // clock prescaler 128
-    OCR1C = 25;                 // compare match value to trigger interrupt every 200us ([1 / (16E6 / 128)] * 25 = 200us)
-    TIMSK |= (1 << OCIE1A);     // enable output compare match interrupt
-    sei();                      // enable interrupts
-}
-
-ISR(TIMER1_COMPA_vect)
-{
-    buttonState = PINB & (1 << PB0);
-    if (buttonState != lastReading)
-    {
-        if (usbInterruptIsReady())
-        {
-            usbSetInterrupt(midiPkt[msgNum], 4);
-            msgNum++;
-			if (msgNum >= MSG_COUNT) msgNum = 0;
-        }
-    }
-    lastReading = buttonState;
-}
+uint8_t buttonChanged = 0;
 
 int main(void)
 {
@@ -283,12 +260,40 @@ int main(void)
     DDRB &= ~(1 << PB0);        // set PB0 as input (default)
     PORTB |= (1 << PB0);        // enable pullup on PB0
 
-    initTimer1();               // initialize timer and interrupt
+    TCCR1 |= (1 << CTC1);       // clear timer on compare match
+    TCCR1 |= (1 << CS13);       // clock prescaler 128
+    OCR1C = 10;                 // reset timer every 80 ms ([1 / (16E6 / 128)] * 10 = 80us)
     
     for(;;) // main event loop
     {
         wdt_reset(); // reset the watchdog timer
         usbPoll();
+		if (!buttonChanged)
+		{
+			buttonState = PINB & (1 << PB0);
+			if (buttonState != lastReading)
+			{
+				TCNT1 = 0x00;
+				TCCR1 &= ~(1 << CTC1);   // unset timer clear on compare
+				lastReading = buttonState;
+			}
+			if (TCNT1 > 25) // 200ms and no button change
+			{
+				TCNT1 = 0x00;
+				TCCR1 |= (1 << CTC1);    // clear timer if > 80ms
+				buttonChanged = 1;
+			}
+		}
+		else
+		{
+			if (usbInterruptIsReady())
+			{
+				usbSetInterrupt(midiPkt[msgNum], 4);
+				msgNum++;
+				if (msgNum >= MSG_COUNT) msgNum = 0;
+				buttonChanged = 0;
+			}
+		}
     }
     return 0;
 }
