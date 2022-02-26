@@ -288,6 +288,8 @@ int main(void)
 		{
 			if (usbInterruptIsReady())
 			{
+				if ((msgNum % 2) && !buttonState) msgNum++;
+				else if (!(msgNum % 2) && buttonState) msgNum++;
 				usbSetInterrupt(midiPkt[msgNum], 4);
 				msgNum++;
 				if (msgNum >= MSG_COUNT) msgNum = 0;
