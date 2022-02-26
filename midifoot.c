@@ -262,7 +262,7 @@ int main(void)
 
     TCCR1 |= (1 << CTC1);       // clear timer on compare match
     TCCR1 |= (1 << CS13);       // clock prescaler 128
-    OCR1C = 10;                 // reset timer every 80 ms ([1 / (16E6 / 128)] * 10 = 80us)
+    OCR1C = 5;                 // reset timer every 80 ms ([1 / (16E6 / 128)] * 5 = 40us)
     
     for(;;) // main event loop
     {
@@ -274,13 +274,13 @@ int main(void)
 			if (buttonState != lastReading)
 			{
 				TCNT1 = 0x00;
-				TCCR1 &= ~(1 << CTC1);   // unset timer clear on compare
+				TCCR1 &= ~(1 << CTC1);   // cancel timer restart on compare
 				lastReading = buttonState;
 			}
 			if (TCNT1 > 25) // 200ms and no button change
 			{
 				TCNT1 = 0x00;
-				TCCR1 |= (1 << CTC1);    // clear timer if > 80ms
+				TCCR1 |= (1 << CTC1);    // restart timer if > 40ms
 				buttonChanged = 1;
 			}
 		}
