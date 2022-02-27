@@ -3,24 +3,24 @@ The MidiFoot is a USB MIDI controller with a single button. It sends hold pedal 
 
 The table below shows the sequence of message values that are sent, as well as some value ranges that can be mapped for a toggle switch or 4-step pattern, for example.
 
-|value| sustain on (>=64) | sustain off (<64) | toggle on (70-85) | toggle off (100-115) | step 4-1 (70-85) | step 4-2 (0-15) | step 4-3 (100-115) | step 4-4 (30-45) |
-|----:|:-----------------:|:-----------------:|:-----------------:|:--------------------:|:----------------:|:---------------:|:------------------:|:----------------:|
-| 70  |         x         |                   |         x         |                      |         x        |                 |                    |                  |
-| 0   |                   |         x         |                   |                      |                  |        x        |                    |                  |
-| 100 |         x         |                   |                   |           x          |                  |                 |          x         |                  |
-| 30  |                   |         x         |                   |                      |                  |                 |                    |         x        |
-| 85  |         x         |                   |         x         |                      |         x        |                 |                    |                  |
-| 15  |                   |         x         |                   |                      |                  |        x        |                    |                  |
-| 115 |         x         |                   |                   |           x          |                  |                 |          x         |                  |
-| 45  |                   |         x         |                   |                      |                  |                 |                    |         x        |
-| 75  |         x         |                   |         x         |                      |         x        |                 |                    |                  |
-| 5   |                   |         x         |                   |                      |                  |        x        |                    |                  |
-| 105 |         x         |                   |                   |           x          |                  |                 |          x         |                  |
-| 35  |                   |         x         |                   |                      |                  |                 |                    |         x        |
-| 80  |         x         |                   |         x         |                      |         x        |                 |                    |                  |
-| 10  |                   |         x         |                   |                      |                  |        x        |                    |                  |
-| 110 |         x         |                   |                   |           x          |                  |                 |          x         |                  |
-| 40  |                   |         x         |                   |                      |                  |                 |                    |         x        |
+| value | sustain on (>=64) | sustain off (<64) | toggle on (70-85) | toggle off (100-115) | 4step-1 (70-85) | 4step-2 (0-15) | 4step-3 (100-115) | 4step-4 (30-45) |
+|------:|:-----------------:|:-----------------:|:-----------------:|:--------------------:|:---------------:|:--------------:|:-----------------:|:---------------:|
+|    70 |         x         |                   |         x         |                      |        x        |                |                   |                 |
+|     0 |                   |         x         |                   |                      |                 |        x       |                   |                 |
+|   100 |         x         |                   |                   |           x          |                 |                |         x         |                 |
+|    30 |                   |         x         |                   |                      |                 |                |                   |        x        |
+|    85 |         x         |                   |         x         |                      |        x        |                |                   |                 |
+|    15 |                   |         x         |                   |                      |                 |        x       |                   |                 |
+|   115 |         x         |                   |                   |           x          |                 |                |         x         |                 |
+|    45 |                   |         x         |                   |                      |                 |                |                   |        x        |
+|    75 |         x         |                   |         x         |                      |        x        |                |                   |                 |
+|     5 |                   |         x         |                   |                      |                 |        x       |                   |                 |
+|   105 |         x         |                   |                   |           x          |                 |                |         x         |                 |
+|    35 |                   |         x         |                   |                      |                 |                |                   |        x        |
+|    80 |         x         |                   |         x         |                      |        x        |                |                   |                 |
+|    10 |                   |         x         |                   |                      |                 |        x       |                   |                 |
+|   110 |         x         |                   |                   |           x          |                 |                |         x         |                 |
+|    40 |                   |         x         |                   |                      |                 |                |                   |        x        |
   
 ## Installing/Flashing
 
