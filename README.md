@@ -44,4 +44,4 @@ You must also connect a 16MHz clock source (quartz oscillator) to pins 2&3 (XTAL
 sudo make flash && sudo make fuse
 ```
 ## Modifying
-You can send whatever messages you wish by modifying the code in _midifoot.c_ and recompiling and flashing as described above. Modify the `midiPkt` array to change what messages are sent - the [comment](https://github.com/albedozero/midifoot/blob/d33accc54c5183eeefc905d57f539b52d1b95b1d/midifoot.c#L208) above the declaration explains the formatting of MIDI packets. If you change the total number of messages, update `MSG_COUNT` to reflect the new value.
+You can send whatever messages you wish by modifying the code in _midifoot.c_ and recompiling and flashing as described above. Modify the `midiPkt` array to change what messages are sent - the [comment](https://github.com/albedozero/midifoot/blob/f3f80baf9e75f18e045adbeb4e9365699b2baa4f/midifoot.c#L208) above the declaration explains the formatting of MIDI packets. If you change the total number of messages, update `MSG_COUNT` to reflect the new value.
