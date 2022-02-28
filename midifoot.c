@@ -268,34 +268,34 @@ int main(void)
     {
         wdt_reset(); // reset the watchdog timer
         usbPoll();
-		if (!buttonChanged)
-		{
-			buttonState = PINB & (1 << PB0);
-			if (buttonState != lastReading)
-			{
-				TCNT1 = 0x00;
-				TCCR1 &= ~(1 << CTC1);   // cancel timer restart on compare
-				lastReading = buttonState;
-			}
-			if (TCNT1 > 25) // 200ms and no button change
-			{
-				TCNT1 = 0x00;
-				TCCR1 |= (1 << CTC1);    // restart timer if > 40ms
-				buttonChanged = 1;
-			}
-		}
-		else
-		{
-			if (usbInterruptIsReady())
-			{
-				if ((msgNum % 2) && !buttonState) msgNum++;
-				else if (!(msgNum % 2) && buttonState) msgNum++;
-				usbSetInterrupt(midiPkt[msgNum], 4);
-				msgNum++;
-				if (msgNum >= MSG_COUNT) msgNum = 0;
-				buttonChanged = 0;
-			}
-		}
+        if (!buttonChanged)
+        {
+            buttonState = PINB & (1 << PB0);
+            if (buttonState != lastReading)
+            {
+                TCNT1 = 0x00;
+                TCCR1 &= ~(1 << CTC1);   // cancel timer restart on compare
+                lastReading = buttonState;
+            }
+            if (TCNT1 > 25) // 200ms and no button change
+            {
+                TCNT1 = 0x00;
+                TCCR1 |= (1 << CTC1);    // restart timer if > 40ms
+                buttonChanged = 1;
+            }
+        }
+        else
+        {
+            if (usbInterruptIsReady())
+            {
+                if ((msgNum % 2) && !buttonState) msgNum++;
+                else if (!(msgNum % 2) && buttonState) msgNum++;
+                usbSetInterrupt(midiPkt[msgNum], 4);
+                msgNum++;
+                if (msgNum >= MSG_COUNT) msgNum = 0;
+                buttonChanged = 0;
+            }
+        }
     }
     return 0;
 }
