@@ -22,6 +22,10 @@ The table below shows the sequence of message values that are sent, as well as s
 |   110 |         x         |                   |                   |           x          |                 |                |         x         |                 |
 |    40 |                   |         x         |                   |                      |                 |                |                   |        x        |
   
+## Schematic
+
+![MIDIFoot schematic](midifoot_schem.png)
+
 ## Installing/Flashing
 
 You will need an AVR-C environment installed to build from source. A Raspberry Pi is quite useful as a build environment, as you can compile code and flash AVRs using the SPI interface on the GPIO header. The included Makefile assumes you are doing this - modify the `AVRDUDE` variable if you are using a different programmer. To install the necessary tools for compiling and flashing on the Pi, enter
