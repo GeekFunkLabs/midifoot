@@ -1,26 +1,20 @@
 # MidiFoot
 The MidiFoot is a USB MIDI controller with a single button. It sends hold pedal (CC#64) messages on MIDI channel 15, but with a rotating pattern of 16 values for each press and release so you can map the messages to different things. This allows it to be used as a momentary or toggle button, and even play 4, 8, or 16-note patterns. It uses an ATTiny85 to emulate a class-compliant USB MIDI device using the [V-USB](https://www.obdev.at/products/vusb/index.html) library, so it’s inexpensive and doesn’t need any drivers installed to work on most computers. The PID=1508 and VID=5824 have been generously provided by [Objective Development](https://www.obdev.at/). Much credit to [Martin Homuth-Rosemann](http://cryptomys.de/horo/index.html) for developing [V-USB-MIDI](http://cryptomys.de/horo/V-USB-MIDI/index.html), on which this is based. The MidiFoot is a creation of [Geek Funk Labs](http://geekfunklabs.com), where you can find a complete bill of materials, links to obtain kits/builds, etc.
 
-The table below shows the sequence of message values that are sent, as well as some value ranges that can be mapped for a toggle switch or 4-step pattern, for example.
+The ranges of values to map for each function are shown in the list below.
 
-| value | sustain on (>=64) | sustain off (<64) | toggle on (70-85) | toggle off (100-115) | 4step-1 (70-85) | 4step-2 (0-15) | 4step-3 (100-115) | 4step-4 (30-45) |
-|------:|:-----------------:|:-----------------:|:-----------------:|:--------------------:|:---------------:|:--------------:|:-----------------:|:---------------:|
-|    70 |         x         |                   |         x         |                      |        x        |                |                   |                 |
-|     0 |                   |         x         |                   |                      |                 |        x       |                   |                 |
-|   100 |         x         |                   |                   |           x          |                 |                |         x         |                 |
-|    30 |                   |         x         |                   |                      |                 |                |                   |        x        |
-|    85 |         x         |                   |         x         |                      |        x        |                |                   |                 |
-|    15 |                   |         x         |                   |                      |                 |        x       |                   |                 |
-|   115 |         x         |                   |                   |           x          |                 |                |         x         |                 |
-|    45 |                   |         x         |                   |                      |                 |                |                   |        x        |
-|    75 |         x         |                   |         x         |                      |        x        |                |                   |                 |
-|     5 |                   |         x         |                   |                      |                 |        x       |                   |                 |
-|   105 |         x         |                   |                   |           x          |                 |                |         x         |                 |
-|    35 |                   |         x         |                   |                      |                 |                |                   |        x        |
-|    80 |         x         |                   |         x         |                      |        x        |                |                   |                 |
-|    10 |                   |         x         |                   |                      |                 |        x       |                   |                 |
-|   110 |         x         |                   |                   |           x          |                 |                |         x         |                 |
-|    40 |                   |         x         |                   |                      |                 |                |                   |        x        |
+- 16-step pattern (this is the full sequence):
+  70, 0, 100, 30, 85, 15, 115, 45, 75, 5, 105, 35, 80, 10, 110, 40
+- 8-step pattern:
+  70-75, 0-5, 100-105, 30-35, 80-85, 10-15, 110-115, 40-45
+- 4-step pattern:
+  70-85, 0-15, 100-115, 30-45
+- Toggle switch:
+  - On: 70-85
+  - Off: 100-115
+- Momentary switch:
+  - On: 64-127
+  - Off: 0-63
   
 ## Schematic
 
